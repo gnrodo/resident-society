@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 Resident Society Pokédex - Perfiles Cósmicos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 3em;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #666;
+            margin: 10px 0;
+        }
+
+        .search-container {
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2em;
+            color: #667eea;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .pokemon-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+        }
+
+        .pokemon-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border-color: #667eea;
+        }
+
+        .pokemon-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+        }
+
+        .card-header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .pokemon-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pokemon-type {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: white;
+            margin: 5px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .type-risarius { background: linear-gradient(45deg, #ff6b6b, #feca57); }
+        .type-emoticonis { background: linear-gradient(45deg, #48cae4, #023e8a); }
+        .type-minimalista { background: linear-gradient(45deg, #2d3436, #636e72); }
+        .type-interrogatus { background: linear-gradient(45deg, #a29bfe, #6c5ce7); }
+        .type-equilibrius { background: linear-gradient(45deg, #00b894, #00cec9); }
+        .type-exclamatius { background: linear-gradient(45deg, #e17055, #d63031); }
+        .type-manijus { background: linear-gradient(45deg, #fd79a8, #e84393); }
+        .type-linksharius { background: linear-gradient(45deg, #0984e3, #74b9ff); }
+
+        .pokemon-description {
+            font-style: italic;
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1em;
+            line-height: 1.4;
+        }
+
+        .stats-section {
+            margin: 20px 0;
+        }
+
+        .stats-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 8px 0;
+            padding: 8px 12px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateX(5px);
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .abilities-section {
+            margin: 20px 0;
+        }
+
+        .ability-item {
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 10px 15px;
+            margin: 8px 0;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .ability-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .vocabulary-section {
+            margin: 20px 0;
+        }
+
+        .vocab-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+            padding: 10px 15px;
+            background: rgba(240, 147, 251, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .vocab-item:hover {
+            background: rgba(240, 147, 251, 0.2);
+            transform: scale(1.02);
+        }
+
+        .vocab-medal {
+            font-size: 1.2em;
+        }
+
+        .vocab-word {
+            font-weight: bold;
+            color: #764ba2;
+        }
+
+        .vocab-count {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .prophecy-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px dashed #667eea;
+            position: relative;
+        }
+
+        .prophecy-section::before {
+            content: '🔮';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: white;
+            padding: 0 10px;
+            font-size: 1.5em;
+        }
+
+        .prophecy-text {
+            font-style: italic;
+            color: #555;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .compatibility-section {
+            margin: 20px 0;
+        }
+
+        .compatibility-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+            padding: 10px 15px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .compatibility-item:hover {
+            transform: scale(1.02);
+        }
+
+        .compat-perfect { background: rgba(76, 175, 80, 0.1); }
+        .compat-good { background: rgba(76, 175, 80, 0.05); }
+        .compat-caution { background: rgba(255, 193, 7, 0.1); }
+        .compat-explosive { background: rgba(244, 67, 54, 0.1); }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .pokemon-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔮 RESIDENT SOCIETY POKÉDEX 🎵</h1>
+            <p>Perfiles Cósmicos Súper Únicos</p>
+            <p><em>Análisis cósmico-digital personalizado - Cada alma es única e irrepetible</em></p>
+            
+            <div class="search-container">
+                <input type="text" class="search-box" placeholder="Buscar por nombre o signo cósmico..." id="searchBox">
+                <span class="search-icon">🔍</span>
+            </div>
+
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all">Todos (23)</button>
+                <button class="filter-btn" data-filter="risarius">Risarius</button>
+                <button class="filter-btn" data-filter="emoticonis">Emoticonis</button>
+                <button class="filter-btn" data-filter="minimalista">Minimalista</button>
+                <button class="filter-btn" data-filter="interrogatus">Interrogatus</button>
+                <button class="filter-btn" data-filter="equilibrius">Equilibrius</button>
+                <button class="filter-btn" data-filter="exclamatius">Exclamatius</button>
+                <button class="filter-btn" data-filter="manijus">Manijus</button>
+                <button class="filter-btn" data-filter="linksharius">Linksharius</button>
+            </div>
+        </div>
+
+        <div class="cards-grid" id="cardsContainer">
+            <!-- Las tarjetas se generarán dinámicamente -->
+        </div>
+    </div>
+
+    <script>
+        const profiles = [
+            {
+                name: "FLOR GRUPO HERNAN",
+                type: "Risarius Argentinus Auténtico",
+                typeClass: "risarius",
+                emoji: "🇦🇷😄",
+                subtitle: "El Riéndose Más Argentino",
+                description: "Tu 'ajajaj' aparece 1470 veces. Eres la esencia misma del humor argentino digitalizado.",
+                stats: {
+                    "Volumen de expresión": "12,626 mensajes",
+                    "Constancia temporal": "208 días",
+                    "Momento de poder": "Tardecito",
+                    "Emoji del alma": "🤣 (413 veces)",
+                    "Estilo comunicativo": "Minimalista zen (32 chars)"
+                },
+                abilities: [
+                    "😂 Fábrica de Felicidad: 3240 risas totales - eres una central de alegría",
+                    "📢 Gritón Profesional: 156 palabras en mayúsculas - cuando hablas, el universo escucha"
+                ],
+                vocabulary: [
+                    { medal: "🥇", word: "jajajajaja", count: "301 veces" },
+                    { medal: "🥈", word: "amigo", count: "274 veces" },
+                    { medal: "🥉", word: "amiga", count: "221 veces" }
+                ],
+                prophecy: "Eres el equilibrio perfecto entre caos y orden digital. Tu misión cósmica es mantener la armonía del grupo y tu destino es convertirte en el Buda del WhatsApp.",
+                compatibility: [
+                    { level: "💯", type: "perfect", text: "Alma gemela: Equilibrius (la armonía perfecta)" },
+                    { level: "💚", type: "good", text: "Buena vibra: Con todos (eres el comodín universal)" },
+                    { level: "⚠️", type: "caution", text: "Cuidado: Ninguno (tu equilibrio es tu fortaleza)" },
+                    { level: "💥", type: "explosive", text: "Explosivo: Solo con trolls (pero los neutralizas fácilmente)" }
+                ]
+            },
+            {
+                name: "ANTO GRUPO HERNAN",
+                type: "Emoticonis Lloronus Felicis",
+                typeClass: "emoticonis",
+                emoji: "😂💧",
+                subtitle: "El Llorón de la Felicidad",
+                description: "Tu emoji 😂 aparece 33 veces. Lloras de risa tanto que podrías llenar un océano de lágrimas de felicidad.",
+                stats: {
+                    "Volumen de expresión": "8,784 mensajes",
+                    "Constancia temporal": "202 días",
+                    "Momento de poder": "Tardecito",
+                    "Emoji del alma": "😂 (33 veces)",
+                    "Estilo comunicativo": "Minimalista zen (25 chars)"
+                },
+                abilities: [
+                    "😂 Fábrica de Felicidad: 1809 risas totales - eres una central de alegría",
+                    "📢 Gritón Profesional: 1167 palabras en mayúsculas - cuando hablas, el universo escucha"
+                ],
+                vocabulary: [
+                    { medal: "🥇", word: "estoy", count: "119 veces" },
+                    { medal: "🥈", word: "track", count: "114 veces" },
+                    { medal: "🥉", word: "quiero", count: "96 veces" }
+                ],
+                prophecy: "Eres el equilibrio perfecto entre caos y orden digital. Tu misión cósmica es mantener la armonía del grupo y tu destino es convertirte en el Buda del WhatsApp.",
+                compatibility: [
+                    { level: "💯", type: "perfect", text: "Alma gemela: Equilibrius (la armonía perfecta)" },
+                    { level: "💚", type: "good", text: "Buena vibra: Con todos (eres el comodín universal)" },
+                    { level: "⚠️", type: "caution", text: "Cuidado: Ninguno (tu equilibrio es tu fortaleza)" },
+                    { level: "💥", type: "explosive", text: "Explosivo: Solo con trolls (pero los neutralizas fácilmente)" }
+                ]
+            },
+            {
+                name: "LUCHO GRUPO HERNAN",
+                type: "Minimalista Zen Master",
+                typeClass: "minimalista",
+                emoji: "⚡🎯",
+                subtitle: "El Maestro de la Síntesis Zen",
+                description: "Con mensajes de 23 caracteres promedio, dices más con menos. Tu poder está en la precisión absoluta.",
+                stats: {
+                    "Volumen de expresión": "8,619 mensajes",
+                    "Constancia temporal": "192 días",
+                    "Momento de poder": "Tardecito",
+                    "Emoji del alma": "❤️ (9 veces)",
+                    "Estilo comunicativo": "Minimalista zen (23 chars)"
+                },
+                abilities: [
+                    "😂 Fábrica de Felicidad: 1422 risas totales - eres una central de alegría",
+                    "📢 Gritón Profesional: 101 palabras en mayúsculas - cuando hablas, el universo escucha"
+                ],
+                vocabulary: [
+                    { medal: "🥇", word: "hernan", count: "197 veces" },
+                    { medal: "🥈", word: "track", count: "174 veces" },
+                    { medal: "🥉", word: "jajajajaja", count: "114 veces" }
+                ],
+                prophecy: "Eres el equilibrio perfecto entre caos y orden digital. Tu misión cósmica es mantener la armonía del grupo y tu destino es convertirte en el Buda del WhatsApp.",
+                compatibility: [
+                    { level: "💯", type: "perfect", text: "Alma gemela: Equilibrius (la armonía perfecta)" },
+                    { level: "💚", type: "good", text: "Buena vibra: Con todos (eres el comodín universal)" },
+                    { level: "⚠️", type: "caution", text: "Cuidado: Ninguno (tu equilibrio es tu fortaleza)" },
+                    { level: "💥", type: "explosive", text: "Explosivo: Solo con trolls (pero los neutralizas fácilmente)" }
+                ]
+            },
+            {
+                name: "PABLO GRUPO HERNAN",
+                type: "Risarius Argentinus Auténtico",
+                typeClass: "risarius",
+                emoji: "🇦🇷😄",
+                subtitle: "El Riéndose Más Argentino",
+                description: "Tu 'ajajaj' aparece 312 veces. Eres la esencia misma del humor argentino digitalizado.",
+                stats: {
+                    "Volumen de expresión": "8,338 mensajes",
+                    "Constancia temporal": "165 días",
+                    "Momento de poder": "Tardecito",
+                    "Emoji del alma": "❤️ (4 veces)",
+                    "Estilo comunicativo": "Minimalista zen (37 chars)"
+                },
+                abilities: [
+                    "🇦🇷 Embajador del Humor Argentino: Tu 'ajajaj' es marca registrada nacional",
+                    "📢 Gritón Profesional: 233 palabras en mayúsculas - cuando hablas, el universo escucha"
+                ],
+                vocabulary: [
+                    { medal: "🥇", word: "igual", count: "152 veces" },
+                    { medal: "🥈", word: "amigo", count: "141 veces" },
+                    { medal: "🥉", word: "ahora", count: "137 veces" }
+                ],
+                prophecy: "En una vida pasada fuiste un comediante de la corte real. En esta vida, tu misión es democratizar la risa a través de WhatsApp. En tu próxima reencarnación serás el emoji 😂 oficial de la humanidad.",
+                compatibility: [
+                    { level: "💯", type: "perfect", text: "Alma gemela: Otros Risarius (se potencian mutuamente)" },
+                    { level: "💚", type: "good", text: "Buena vibra: Musicalis y Equilibrius (aprecian tu humor)" },
+                    { level: "⚠️", type: "caution", text: "Cuidado: Interrogatus (pueden agotarse con tanta risa)" },
+                    { level: "💥", type: "explosive", text: "Explosivo: Exclamatius (demasiada energía junta puede ser caótica)" }
+                ]
+            },
+            {
+                name: "DAMI GRUPO HERNAN",
+                type: "Risarius Argentinus Auténtico",
+                typeClass: "risarius",
+                emoji: "🇦🇷😄",
+                subtitle: "El Riéndose Más Argentino",
+                description: "Tu 'ajajaj' aparece 213 veces. Eres la esencia misma del humor argentino digitalizado.",
+                stats: {
+                    "Volumen de expresión": "8,236 mensajes",
+                    "Constancia temporal": "204 días",
+                    "Momento de poder": "Tardecito",
+                    "Emoji del alma": "🤣 (158 veces)",
+                    "Estilo comunicativo": "Minimalista zen (34 chars)"
+                },
+                abilities: [
+                    "🇦🇷 Embajador del Humor Argentino: Tu 'ajajaj' es marca registrada nacional",
+                    "📢 Gritón Profesional: 221 palabras en mayúsculas - cuando hablas, el universo escucha"
+                ],
+                vocabulary: [
+                    { medal: "🥇", word: "amigo", count: "228 veces" },
+                    { medal: "🥈", word: "mensaje", count: "155 veces" },
+                    { medal: "🥉", word: "editó", count: "152 veces" }
+                ],
+                prophecy: "En una vida pasada fuiste un comediante de la corte real. En esta vida, tu misión es democratizar la risa a través de WhatsApp. En tu próxima reencarnación serás el emoji 😂 oficial de la humanidad.",
+                compatibility: [
+                    { level: "💯", type: "perfect", text: "Alma gemela: Otros Risarius (se potencian mutuamente)" },
+                    { level: "💚", type: "good", text: "Buena vibra: Musicalis y Equilibrius (aprecian tu humor)" },
+                    { level: "⚠️", type: "caution", text: "Cuidado: Interrogatus (pueden agotarse con tanta risa)" },
+                    { level: "💥", type: "explosive", text: "Explosivo: Exclamatius (demasiada energía junta puede ser caótica)" }
+                ]
+            },
+            {
+                name: "MARU GRUPO HERNAN",
+                type: "Minimalista Zen Master",
+                typeClass: "minimalista",
+                emoji: "⚡🎯",
+                subtitle: "El Maestro de la Síntesis Zen",
+                description: "Con mensajes de 28 caracteres promedio, dices más con menos. Tu poder está en la precisión absoluta.",
+                stats: {
+                    "Volumen de expresión": "6,662 mensajes",
+                    "Constancia temporal": "179 días",
+                    "Momento de poder": "Media Mañana",
+                    "Emoji del alma": "❤️ (246 veces)",
+                    "Estilo comunicativo": "Minimalista zen (28 chars)"
+                },
+                abilities: [
+                    "😂 Fábrica de Felicidad: 1509 risas totales - eres una central de alegría",
+                    "📢 Gritón Profesional: 268 palabras en mayúsculas - cuando hablas, el universo escucha"
+                ],
+                vocabulary: [
+                    { medal: "🥇", word: "mensaje", count: "155 veces" },
+                    { medal: "🥈", word: "editó", count: "151 veces" },
+                    { medal: "🥉", word: "hermoso", count: "144 veces" }
+                ],
+                prophecy: "Eres la reencarnación de Sócrates con smartphone. Tu misión es cuestionar la realidad digital y tu destino es convertirte en el Google humano del futuro.",
+                compatibility: [
+                    { level: "💯", type: "perfect", text: "Alma gemela: Otros Interrogatus (sesiones épicas de preguntas)" },
+                    { level: "💚", type: "good", text: "Buena vibra: Textualius (les gusta explicar en detalle)" },
+                    { level: "⚠️", type: "caution", text: "Cuidado: Minimalista (frustración por respuestas cortas)" },
+                    { level: "💥", type: "explosive", text: "Explosivo: Nocturnalis (están dormidos cuando preguntas)" }
+                ]
+            },
+            {
+                name: "MARULITA GRUPO HERNAN",
+                type: "Equilibrius Mysticus Único",
+                typeClass: "equilibrius",
+                emoji: "⚖️✨",
+                subtitle: "El Alma Equilibrada Misteriosa",
+                description: "Tu esencia digital es única e irrepetible. Eres un misterio hermoso en el universo del chat.",
+                stats: {
+                    "Volumen de expresión": "5,319 mensajes",
+                    "Constancia temporal": "153 días",
+                    "Momento de poder": "Tardecito",
+                    "Emoji del alma": "😊 (2 veces)",
+                    "Estilo comunicativo": "Minimalista zen (33 chars)"
+                },
+                abilities: [],
+                vocabulary: [
+                    { medal: "🥇", word: "mensaje", count: "131 veces" },
+                    { medal: "🥈", word: "editó", count: "125 veces" },
+                    { medal: "🥉", word: "hernan", count: "109 veces" }
+                ],
+                prophecy: "Eres el equilibrio perfecto entre caos y orden digital. Tu misión cósmica es mantener la armonía del grupo y tu destino es convertirte en el Buda del WhatsApp.",
+                compatibility: [
+                    { level: "💯", type: "perfect", text: "Alma gemela: Equilibrius (la armonía perfecta)" },
+                    { level: "💚", type: "good", text: "Buena vibra: Con todos (eres el comodín universal)" },
+                    { level: "⚠️", type: "caution", text: "Cuidado: Ninguno (tu equilibrio es tu fortaleza)" },
+                    { level: "💥", type: "explosive", text: "Explosivo: Solo con trolls (pero los neutralizas fácilmente)" }
+                ]
+            },
+            {
+                name: "MATIAS SANTANDER GRUPO HERNAN",
+                type: "Emoticonis Lloronus Felicis",
+                typeClass: "emoticonis",
+                emoji: "😂💧",
+                subtitle: "El Llorón de la Felicidad",
+                description: "Tu emoji 😂 aparece 84 veces. Lloras de risa tanto que podrías llenar un océano de lágrimas de felicidad.",
+                stats: {
+                    "Volumen de expresión": "4,508 mensajes",
+                    "Constancia temporal": "187 días",
+                    "Momento de poder": "Almorzador",
+                    "Emoji del alma": "😂 (84 veces)",
+                    "Estilo comunicativo": "Equilibrado perfecto (50 chars)"
+                },
+                abilities: [
+                    "🍽️ Señor del Mediodía: Tu momento de gloria es la hora del almuerzo",
+                    "📢 Gritón Profesional: 296 palabras en mayúsculas - cuando hablas, el universo escucha"
+                ],
+                vocabulary: [
+                    { medal: "🥇", word: "mensaje", count: "96 veces" },
+                    { medal: "🥈", word: "editó", count: "92 veces" },
+                    { medal: "🥉", word: "jajaj", count: "90 veces" }
+                ],
+                prophecy: "Eres el equilibrio perfecto entre caos y orden digital. Tu misión cósmica es mantener la armonía del grupo y tu destino es convertirte en el Buda del WhatsApp.",
+                compatibility: [
+                    { level: "💯", type: "perfect", text: "Alma gemela: Equilibrius (la armonía perfecta)" },
+                    { level: "💚", type: "good", text: "Buena vibra: Con todos (eres el comodín universal)" },
+                    { level: "⚠️", type: "caution", text: "Cuidado: Ninguno (tu equilibrio es tu fortaleza)" },
+                    { level: "💥", type: "explosive", text: "Explosivo: Solo con trolls (pero los neutralizas fácilmente)" }
+                ]
+            },
+            {
+                name: "MAJITO GRUPO HERNAN",
+                type: "Interrogatus Socraticus Digitalis",
+                typeClass: "interrogatus",
+                emoji: "❓🔍",
+                subtitle: "El Sócrates del WhatsApp",
+                description: "Con 1357 preguntas formuladas, tu curiosidad trasciende lo humano. Eres la reencarnación digital de Sócrates.",
+                stats: {
+                    "Volumen de expresión": "3,801 mensajes",
+                    "Constancia temporal": "152 días",
+                    "Momento de poder": "Tardecito",
+                    "Emoji del alma": "😊 (167 veces)",
+                    "Estilo comunicativo": "Equilibrado perfecto (43 chars)"
+                },
+                abilities: [
+                    "❓ Detective Digital: 1357 preguntas - tu curiosidad no tiene límites",
+                    "⚡ Generador de Energía: 4049 exclamaciones - podrías alimentar una ciudad",
+                    "📢 Gritón Profesional: 64 palabras en mayúsculas - cuando hablas, el universo escucha"
+                ],
+                vocabulary: [
+                    { medal: "🥇", word: "quiero", count: "81 veces" },
+                    { medal: "🥈", word: "estoy", count: "81 veces" },
+                    { medal: "🥉", word: "gente", count: "75 veces" }
+                ],
+                prophecy: "Eres la reencarnación de Sócrates con smartphone. Tu misión es cuestionar la realidad digital y tu destino es convertirte en el Google humano del futuro.",
+                compatibility: [
+                    { level: "💯", type: "perfect", text: "Alma gemela: Otros Interrogatus (sesiones épicas de preguntas)" },
+                    { level: "💚", type: "good", text: "Buena vibra: Textualius (les gusta explicar en detalle)" },
+                    { level: "⚠️", type: "caution", text: "Cuidado: Minimalista (frustración por respuestas cortas)" },
+                    { level: "💥", type: "explosive", text: "Explosivo: Nocturnalis (están dormidos cuando preguntas)" }
+                ]
+            },
+            {
+                name: "AMOR",
+                type: "Exclamatius Energeticus Volcanus",
+                typeClass: "exclamatius",
+                emoji: "⚡🌋",
+                subtitle: "El Volcán de Energía Pura",
+                description: "Tus 805 exclamaciones podrían alimentar una ciudad. Tu energía es tan intensa que podría generar electricidad.",
+                stats: {
+                    "Volumen de expresión": "1,957 mensajes",
+                    "Constancia temporal": "144 días",
+                    "Momento de poder": "Tardecito",
+                    "Emoji del alma": "😊 (13 veces)",
+                    "Estilo comunicativo": "Minimalista zen (40 chars)"
+                },
+                abilities: [
+                    "🌡️ Termómetro de la Manija: 16 mediciones de emoción grupal",
+                    "⚡ Generador de Energía: 805 exclamaciones - podrías alimentar una ciudad"
+                ],
+                vocabulary: [
+                    { medal: "🥇", word: "estoy", count: "44 veces" },
+                    { medal: "🥈", word: "quiero", count: "38 veces" },
+                    { medal: "🥉", word: "mensaje", count: "35 veces" }
+                ],
+                prophecy: "Eres el termómetro emocional del grupo. Tu misión es medir y equilibrar las energías colectivas. Tu destino es convertirte en la brújula emocional del universo digital.",
+                compatibility: [
+                    { level: "💯", type: "perfect", text: "Alma gemela: Otros Manijus (entienden tu intensidad)" },
+                    { level: "💚", type: "good", text: "Buena vibra: Exclamatius (comparten tu energía)" },
+                    { level: "⚠️", type: "caution", text: "Cuidado: Minimalista (pueden no entender tu intensidad)" },
+                    { level: "💥", type: "explosive", text: "Explosivo: Equilibrius extremos (chocan con tu espontaneidad)" }
+                ]
+            }
+        ];
+
+        function createCard(profile) {
+            return `
+                <div class="pokemon-card" data-type="${profile.typeClass}">
+                    <div class="card-header">
+                        <div class="pokemon-name">${profile.emoji} ${profile.name}</div>
+                        <div class="pokemon-type type-${profile.typeClass}">${profile.type}</div>
+                        <div style="font-size: 1.1em; color: #666; margin: 10px 0;">${profile.subtitle}</div>
+                    </div>
+
+                    <div class="pokemon-description">
+                        ${profile.description}
+                    </div>
+
+                    <div class="stats-section">
+                        <div class="stats-title">📊 Métricas del Alma Digital</div>
+                        ${Object.entries(profile.stats).map(([key, value]) => `
+                            <div class="stat-item">
+                                <span class="stat-label">${key}:</span>
+                                <span class="stat-value">${value}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    ${profile.abilities.length > 0 ? `
+                    <div class="abilities-section">
+                        <div class="stats-title">⚡ Habilidades Especiales</div>
+                        ${profile.abilities.map(ability => `
+                            <div class="ability-item">${ability}</div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+
+                    <div class="vocabulary-section">
+                        <div class="stats-title">🏆 Vocabulario Cósmico</div>
+                        ${profile.vocabulary.map(vocab => `
+                            <div class="vocab-item">
+                                <span class="vocab-medal">${vocab.medal}</span>
+                                <span class="vocab-word">${vocab.word}</span>
+                                <span class="vocab-count">(${vocab.count})</span>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="prophecy-section">
+                        <div class="prophecy-text">${profile.prophecy}</div>
+                    </div>
+
+                    <div class="compatibility-section">
+                        <div class="stats-title">💫 Compatibilidad Cósmica</div>
+                        ${profile.compatibility.map(compat => `
+                            <div class="compatibility-item compat-${compat.type}">
+                                <span>${compat.level}</span>
+                                <span>${compat.text}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCards(profilesToShow = profiles) {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = profilesToShow.map(profile => createCard(profile)).join('');
+        }
+
+        function filterCards(filterType) {
+            const filteredProfiles = filterType === 'all'
+                ? profiles
+                : profiles.filter(profile => profile.typeClass === filterType);
+            renderCards(filteredProfiles);
+        }
+
+        function searchCards(searchTerm) {
+            const filteredProfiles = profiles.filter(profile =>
+                profile.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                profile.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                profile.description.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            renderCards(filteredProfiles);
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCards();
+
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    filterCards(this.dataset.filter);
+                });
+            });
+
+            // Search functionality
+            document.getElementById('searchBox').addEventListener('input', function() {
+                const searchTerm = this.value.trim();
+                if (searchTerm === '') {
+                    const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+                    filterCards(activeFilter);
+                } else {
+                    searchCards(searchTerm);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
